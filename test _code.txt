@@ -1,0 +1,20 @@
+# Just paste this into the iteration 1 file to do the same test that I did. # Example of adding a new car
+new_car = {"ID": "6", "Make": "Tesla", "Model": "Model S", "Year": "2023", "Color": "Red"}
+add_car(new_car)
+
+# Example of checking if a car exists
+if_exist("1")  # Should print "ID already exists."
+if_exist("10")  # Should print "ID does not exist."
+
+# Print catalog before removal
+print("Catalog before removal:")
+for item in catalog:
+    print(item)
+
+# Example of removing a car
+remove_car("2")  # Should remove the Honda Civic from the catalog
+
+# Print catalog after removal
+print("Catalog after removal:")
+for item in catalog:
+    print(item)

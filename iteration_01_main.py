@@ -16,11 +16,14 @@ def add_car(car_info):
     catalog.append(car_info)
 
 def remove_car(ID):
+    found = False
     for item in catalog:
         if item["ID"] == ID:
-            del item
-        else:
-            print("This item does not exist.")
+            catalog.remove(item)
+            found = True
+            break  # Exit the loop once the item is found and removed
+    if not found:
+        print("This item does not exist.") #$
         
 def if_exist(ID):
     for item in catalog:
@@ -29,3 +32,4 @@ def if_exist(ID):
             return True
     print("ID does not exist.")
     return False
+
