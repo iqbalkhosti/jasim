@@ -1,4 +1,6 @@
-# Just paste this into the iteration 1 file to do the same test that I did. # Example of adding a new car
+# Just paste this into the iteration 1 file to do the same test that I did. 
+
+# Example of adding a new car
 new_car = {"ID": "6", "Make": "Tesla", "Model": "Model S", "Year": "2023", "Color": "Red"}
 add_car(new_car)
 

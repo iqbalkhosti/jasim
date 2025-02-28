@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
-from iteration_01_main import add_car, remove_car, display_info, if_exist, catalog
+from iteration_01_main import add_car, remove_car, if_exist, find_match_items, show_specif_car, catalog
 
 class CatalogApp:
     def __init__(self, root):
@@ -84,6 +84,8 @@ class CatalogApp:
         if not if_exist(car_info["ID"]):
             add_car(car_info)
             messagebox.showinfo("Success", "Car added successfully")
+        else:
+            messagebox.showerror("Error", "Car ID already exists")
         self.main_menu()
     
     def remove_item(self):
