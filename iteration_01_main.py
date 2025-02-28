@@ -3,6 +3,9 @@ import csv
 '''
 Prints only appear in the console, as such they are not really part of the program.
 Please mark prints you want to be part of the program with a '$'
+
+PLEASE FORMAT EVERYTHING AS STRINGS WHEN POSSIBLE
+THE DICTIONARY OR CATALOG DEALS ENTIRELY IN STRINGS
 '''
 
 #automaticelly downloads the database as dictionary <catalog>, saved categories as <categories>
@@ -33,3 +36,22 @@ def if_exist(ID):
     print("ID does not exist.")
     return False
 
+'''
+Filters is a hashmap each filter with the keyword as a parameter
+Gets all different categories in filters, compares them by keypair individually to each item
+'''
+def display_info(filters):
+    items = []
+    filter_keys = filters.keys()
+    for item in catalog:
+        match = True
+        for key in filter_keys:
+            if not item.get(key) == filters.get(key):
+                match = False
+                break
+        if(match):
+            items.append(item)
+    return items
+
+filters = {"Make": "Toyota"}
+print(display_info(filters))
