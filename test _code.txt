@@ -18,3 +18,28 @@ remove_car("2")  # Should remove the Honda Civic from the catalog
 print("Catalog after removal:")
 for item in catalog:
     print(item)
+
+# Test code for user story 2
+# Test Case 1: Exact Match (Make = "Toyota")
+filters = {"Make": "Toyota"}
+print("Test Case 1:", find_match_items(filters))  # Expected: ID 1
+
+# Test Case 2: Multiple Filters (Make = "Honda", Model = "Civic")
+filters = {"Make": "Honda", "Model": "Civic"}
+print("Test Case 2:", find_match_items(filters))  # Expected: ID 2
+
+# Test Case 3: No Match (Make = "Tesla")
+filters = {"Make": "Tesla"}
+print("Test Case 3:", find_match_items(filters))  # Expected: No items
+
+# Test Case 4: Partial Match (Year = "2021")
+filters = {"Year": "2021"}
+print("Test Case 4:", find_match_items(filters))  # Expected: ID 3
+
+# Test Case 5: Empty Filters
+filters = {}
+print("Test Case 5:", find_match_items(filters))  # Expected: All items (IDs 1, 2, 3, 4, 5)
+
+# Test Case 6: Non-Existent Filter Key (Color = "Yellow")
+filters = {"Color": "Yellow"}
+print("Test Case 6:", find_match_items(filters))  # Expected: No item

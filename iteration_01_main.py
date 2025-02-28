@@ -53,5 +53,3 @@ def find_match_items(filters):
             items.append(item)
     return items
 
-filters = {"Make": "Toyota"}
-print(find_match_items(filters))
