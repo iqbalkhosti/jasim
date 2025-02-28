@@ -40,7 +40,7 @@ def if_exist(ID):
 Filters is a hashmap each filter with the keyword as a parameter
 Gets all different categories in filters, compares them by keypair individually to each item
 '''
-def display_info(filters):
+def find_match_items(filters):
     items = []
     filter_keys = filters.keys()
     for item in catalog:
@@ -54,4 +54,4 @@ def display_info(filters):
     return items
 
 filters = {"Make": "Toyota"}
-print(display_info(filters))
+print(find_match_items(filters))
