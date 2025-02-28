@@ -53,3 +53,26 @@ def find_match_items(filters):
             items.append(item)
     return items
 
+def show_specif_car(make, model, year, color):
+    car_info = {
+        "ID": "0",  # Initialize as string
+        "Make": "",
+        "Model": "",
+        "Year": "0",  # Initialize as string
+        "Color": ""
+    }
+
+    for i in catalog:
+        if (i.get("Make") == make and 
+            i.get("Model") == model and 
+            i.get("Year") == year and 
+            i.get("Color") == color):
+            car_info["ID"] = i.get("ID")
+            car_info["Make"] = i.get("Make")
+            car_info["Model"] = i.get("Model")
+            car_info["Year"] = i.get("Year")
+            car_info["Color"] = i.get("Color")
+            break  # Exit loop once the car is found
+
+    return car_info
+

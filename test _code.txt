@@ -19,7 +19,10 @@ print("Catalog after removal:")
 for item in catalog:
     print(item)
 
+
+
 # Test code for user story 2
+
 # Test Case 1: Exact Match (Make = "Toyota")
 filters = {"Make": "Toyota"}
 print("Test Case 1:", find_match_items(filters))  # Expected: ID 1
@@ -43,3 +46,21 @@ print("Test Case 5:", find_match_items(filters))  # Expected: All items (IDs 1, 
 # Test Case 6: Non-Existent Filter Key (Color = "Yellow")
 filters = {"Color": "Yellow"}
 print("Test Case 6:", find_match_items(filters))  # Expected: No item
+
+
+
+# Test code for user story 3
+# Test Case 1: Exact Match
+print("Test Case 1:", show_specif_car("Toyota", "Corolla", "2020", "Blue"))
+
+# Test Case 2: No Match (Incorrect Details)
+print("Test Case 2:", show_specif_car("Toyota", "Corolla", "2021", "Blue"))
+
+# Test Case 3: Partial Match (Incorrect Color)
+print("Test Case 3:", show_specif_car("Toyota", "Corolla", "2020", "Red"))
+
+# Test Case 4: Non-Existent Car
+print("Test Case 4:", show_specif_car("Tesla", "Model S", "2022", "Black"))
+
+# Test Case 5: Case Sensitivity
+print("Test Case 5:", show_specif_car("toyota", "corolla", "2020", "blue"))
