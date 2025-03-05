@@ -53,33 +53,5 @@ def find_match_items(filters):
             items.append(item)
     return items
 
-def show_specif_car(make, model, year, color):
-    car_info = {
-        "ID": "0",  # Initialize as string
-        "Make": "",
-        "Model": "",
-        "Year": "0",  # Initialize as string
-        "Color": ""
-    }
-
-    # Convert inputs to lowercase for case-insensitive comparison
-    make = make.lower()
-    model = model.lower()
-    year = year.lower()
-    color = color.lower()
-
-    for i in catalog:
-        # Convert catalog data to lowercase for comparison
-        if (i.get("Make").lower() == make and 
-            i.get("Model").lower() == model and 
-            i.get("Year").lower() == year and 
-            i.get("Color").lower() == color):
-            car_info["ID"] = i.get("ID")
-            car_info["Make"] = i.get("Make")
-            car_info["Model"] = i.get("Model")
-            car_info["Year"] = i.get("Year")
-            car_info["Color"] = i.get("Color")
-            break  # Exit loop once the car is found
-
-    return car_info
-
+filters = {"Make": "Toyota"}
+print(find_match_items(filters))
