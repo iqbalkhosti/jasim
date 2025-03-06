@@ -18,6 +18,12 @@ def add_car(car_info):
     print("For bulk adding, please edit CSV directly") #$
     catalog.append(car_info)
 
+def update_car(car_info):
+    for item in catalog:
+        if item["ID"] == car_info["ID"]:
+            item.update(car_info)
+            return
+
 def remove_car(ID):
     found = False
     for item in catalog:
@@ -53,5 +59,11 @@ def find_match_items(filters):
             items.append(item)
     return items
 
-filters = {"Make": "Toyota"}
-print(find_match_items(filters))
+fav_cars =[]
+
+def save_fav_car(make, model, year, color):
+    
+    for i in catalog:
+        if(i.get("Make")==make and i.get("Model")==model and i.get("Year")==str(year) and i.get("Color")==color):
+            
+            fav_cars.append(i)
