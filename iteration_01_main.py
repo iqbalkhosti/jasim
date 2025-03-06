@@ -53,5 +53,11 @@ def find_match_items(filters):
             items.append(item)
     return items
 
-filters = {"Make": "Toyota"}
-print(find_match_items(filters))
+fav_cars =[]
+
+def save_fav_car(make, model, year, color):
+    
+    for i in catalog:
+        if(i.get("Make")==make and i.get("Model")==model and i.get("Year")==str(year) and i.get("Color")==color):
+            
+            fav_cars.append(i)
