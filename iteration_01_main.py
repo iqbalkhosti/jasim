@@ -14,6 +14,13 @@ with open("database.csv", "r") as file:
     catalog = [row for row in reader]
     categories = reader.fieldnames
 
+# save catalog as csv
+def save_catalog():
+    with open("database.csv", "w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=categories)
+        writer.writeheader()
+        writer.writerows(catalog)
+
 def add_car(car_info):
     print("For bulk adding, please edit CSV directly") #$
     catalog.append(car_info)

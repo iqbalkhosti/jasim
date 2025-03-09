@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
-from iteration_01_main import add_car, update_car, remove_car, if_exist, catalog, categories
+from iteration_01_main import add_car, update_car, remove_car, save_catalog, if_exist, catalog, categories
 
 class CatalogApp:
     def __init__(self, root):
@@ -52,7 +52,7 @@ class CatalogApp:
 
         self.selected_option = tk.StringVar(value="Select Option")
         dropdown = ttk.Combobox(frame, textvariable=self.selected_option,
-                                values=["Display Catalog", "View Item Details", "Add Entry", "Update Entry", "Remove Entry", "Exit"],
+                                values=["Display Catalog", "View Item Details", "Add Entry", "Update Entry", "Remove Entry", "Save Catalog", "Exit"],
                                 state="readonly")
         dropdown.pack(pady=10)
         dropdown.bind("<<ComboboxSelected>>", self.handle_dropdown_selection)
@@ -74,9 +74,12 @@ class CatalogApp:
             "Add Entry": self.add_item,
             "Update Entry": self.update_item,
             "Remove Entry": self.remove_item,
-            "Exit": self.root.quit
+            "Save Catalog": save_catalog,
+            "Exit": self.on_closing
         }
-        actions.get(self.selected_option.get(), lambda: None)()
+        action = actions.get(self.selected_option.get())
+        if action:
+            action()
 
     def display_results(self, results):
         # Displays search results in the form of clickable buttons
@@ -109,6 +112,7 @@ class CatalogApp:
         button_frame = tk.Frame(frame, bg="#f0f8ff")
         button_frame.pack(pady=10)
         tk.Button(button_frame, text="Update", command=lambda: self.update_item(item.get('ID')), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
+        tk.Button(button_frame, text="Remove", command=lambda: self.remove_item(item.get('ID')), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
         tk.Button(button_frame, text="Back", command=self.main_menu, bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
 
     def view_item(self):
@@ -182,12 +186,20 @@ class CatalogApp:
             # Maybe better error message for what is wrong specifics?
             messagebox.showerror("Error", "Either missing Model or incorrect Year")
 
-    def remove_item(self):
-        item_id = simpledialog.askstring("Remove Item", "Enter item ID to remove:")
-        if item_id:
-            remove_car(item_id)
-            messagebox.showinfo("Success", "Car removed successfully")
+    def remove_item(self, ID=None):
+        if not ID:
+            ID = simpledialog.askstring("Remove Item", "Enter item ID to remove:")
+        if ID:
+            confirm = messagebox.askyesno("Confirm", "Are you sure you want to remove this item?")
+            if confirm:
+                remove_car(ID)
+                messagebox.showinfo("Success", "Car removed successfully")
         self.main_menu()
+
+    def on_closing(self):
+        if messagebox.askyesno("Save Catalog", "Would you like to save the catalog before exiting?"):
+            save_catalog()
+        self.root.destroy()
 
     def clear_window(self):
         # Clears all widgets from the window before updating the UI
