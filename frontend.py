@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
-from iteration_01_main import add_car, update_car, remove_car, save_catalog, if_exist, catalog, categories
+from backend import add_car, update_car, remove_car, save_catalog, if_exist, catalog, categories
 
 class CatalogApp:
     terms = []
