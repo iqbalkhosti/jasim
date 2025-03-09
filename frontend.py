@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
+from tkVideoPlayer import TkinterVideo
 from backend import add_car, update_car, remove_car, save_catalog, if_exist, catalog, categories
 
 class CatalogApp:
@@ -112,7 +113,16 @@ class CatalogApp:
         frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         for key, value in item.items():
-            tk.Label(frame, text=f"{key}: {value}", font=("Arial", 12), bg="#f0f8ff").pack()
+            if key == 'Video' and value:
+                #tk.Label(frame, text=f"{key}:", font=("Arial", 12, "bold"), bg="#f0f8ff").pack()
+                player = TkinterVideo(root, scaled=True)
+                #player.pack(expand=True, fill='both')
+                player.place(relx=0.5, rely=0.5, anchor="center")
+                player.load(value)
+                #player.bind("<Configure>", lambda e: player.place(relw=0.5, relh=0.5))
+                player.play()
+            elif value:
+                tk.Label(frame, text=f"{key}: {value}", font=("Arial", 12), bg="#f0f8ff").pack()
         
         button_frame = tk.Frame(frame, bg="#f0f8ff")
         button_frame.pack(pady=10)
