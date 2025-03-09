@@ -3,6 +3,7 @@ from tkinter import messagebox, simpledialog, ttk
 from iteration_01_main import add_car, update_car, remove_car, save_catalog, if_exist, catalog, categories
 
 class CatalogApp:
+    terms = []
     def __init__(self, root):
         # Initialize the application window with a title, size, and background color
         # Calls the login screen method to start the application
@@ -41,14 +42,16 @@ class CatalogApp:
         frame = tk.Frame(self.root, bg="#f0f8ff")
         frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
+        self.terms = []
+
         search_frame = tk.Frame(frame, bg="white", padx=10, pady=5, relief=tk.RIDGE, bd=2)
         search_frame.pack(fill=tk.X, padx=10, pady=5)
 
         tk.Label(search_frame, text="Search:", bg="white").pack(side=tk.LEFT, padx=5)
         self.search_entry = tk.Entry(search_frame, width=40)
-        self.search_entry.bind("<Return>", lambda event: self.search())
+        self.search_entry.bind("<Return>", lambda e: self.search(True))
         self.search_entry.pack(side=tk.LEFT, padx=5)
-        tk.Button(search_frame, text="Go", command=self.search, bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
+        tk.Button(search_frame, text="Go", command=lambda: self.search(True), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
 
         self.selected_option = tk.StringVar(value="Select Option")
         dropdown = ttk.Combobox(frame, textvariable=self.selected_option,
@@ -57,13 +60,15 @@ class CatalogApp:
         dropdown.pack(pady=10)
         dropdown.bind("<<ComboboxSelected>>", self.handle_dropdown_selection)
 
-    def search(self):
+    def search(self, from_menu=False):
         # Searches the catalog based on user input and displays matching results
         # term = self.search_entry.get().strip().lower()
         # # results = [item for item in catalog if term in item['Make'].lower() or term in item['Model'].lower()] if term else catalog
         # results = [item for item in catalog if any(term in str(item[category]).lower() for category in categories)] if term else catalog
-        terms = self.search_entry.get().strip().lower().split()
-        results = [item for item in catalog if all(any(term in str(item[category]).lower() for category in categories) for term in terms)] if terms else catalog
+        if from_menu:
+            self.terms = self.terms + self.search_entry.get().strip().lower().split()
+            
+        results = [item for item in catalog if all(any(term in str(item[category]).lower() for category in categories) for term in self.terms)] if self.terms else catalog
         self.display_results(results)
 
     def handle_dropdown_selection(self, event):
@@ -113,7 +118,7 @@ class CatalogApp:
         button_frame.pack(pady=10)
         tk.Button(button_frame, text="Update", command=lambda: self.update_item(item.get('ID')), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
         tk.Button(button_frame, text="Remove", command=lambda: self.remove_item(item.get('ID')), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
-        tk.Button(button_frame, text="Back", command=self.main_menu, bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
+        tk.Button(button_frame, text="Back", command=self.search, bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
 
     def view_item(self):
         item_id = simpledialog.askstring("View Item", "Enter item ID:")
