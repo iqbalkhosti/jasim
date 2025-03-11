@@ -80,7 +80,7 @@ class CatalogApp:
             "Add Entry": self.add_item,
             "Update Entry": self.update_item,
             "Remove Entry": self.remove_item,
-            "Save Catalog": save_catalog,
+            "Save Catalog": self.on_save,
             "Exit": self.on_closing
         }
         action = actions.get(self.selected_option.get())
@@ -115,11 +115,12 @@ class CatalogApp:
         for key, value in item.items():
             if key == 'Video' and value:
                 #tk.Label(frame, text=f"{key}:", font=("Arial", 12, "bold"), bg="#f0f8ff").pack()
-                player = TkinterVideo(root, scaled=True)
-                #player.pack(expand=True, fill='both')
-                player.place(relx=0.5, rely=0.5, anchor="center")
+                player = TkinterVideo(frame, scaled=True, bg="#f0f8ff")
+                #player.place(relx=0.5, rely=0.5, anchor="center")
+                player.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+                player._keep_aspect_ratio = True
                 player.load(value)
-                #player.bind("<Configure>", lambda e: player.place(relw=0.5, relh=0.5))
+                player.bind("<Map>", lambda e: player.place(relwidth=0.5, relheight=0.5, relx=0.5, rely=0.5, anchor="center"))
                 player.play()
             elif value:
                 tk.Label(frame, text=f"{key}: {value}", font=("Arial", 12), bg="#f0f8ff").pack()
@@ -213,8 +214,12 @@ class CatalogApp:
 
     def on_closing(self):
         if messagebox.askyesno("Save Catalog", "Would you like to save the catalog before exiting?"):
-            save_catalog()
+            self.on_save()
         self.root.destroy()
+    
+    def on_save(self):
+        save_catalog()
+        messagebox.showinfo("Success", "Catalog saved successfully")
 
     def clear_window(self):
         # Clears all widgets from the window before updating the UI
