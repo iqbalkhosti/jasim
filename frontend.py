@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
 from tkVideoPlayer import TkinterVideo
-from backend import add_car, update_car, remove_car, save_catalog, if_exist, catalog, categories
+from database_backend import Database
 
 class CatalogApp:
     terms = []
+    DB = Database()
     def __init__(self, root):
         # Initialize the application window with a title, size, and background color
         # Calls the login screen method to start the application
@@ -52,7 +53,7 @@ class CatalogApp:
         self.search_entry = tk.Entry(search_frame, width=40)
         self.search_entry.bind("<Return>", lambda e: self.search(True))
         self.search_entry.pack(side=tk.LEFT, padx=5)
-        tk.Button(search_frame, text="Go", command=lambda: self.search(True), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
+        tk.Button(search_frame, text="Go", command=lambda: self.seatch(True), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
 
         self.selected_option = tk.StringVar(value="Select Option")
         dropdown = ttk.Combobox(frame, textvariable=self.selected_option,
@@ -61,21 +62,15 @@ class CatalogApp:
         dropdown.pack(pady=10)
         dropdown.bind("<<ComboboxSelected>>", self.handle_dropdown_selection)
 
+    # NOTICE, MOVED TO BACKEND
     def search(self, from_menu=False):
-        # Searches the catalog based on user input and displays matching results
-        # term = self.search_entry.get().strip().lower()
-        # # results = [item for item in catalog if term in item['Make'].lower() or term in item['Model'].lower()] if term else catalog
-        # results = [item for item in catalog if any(term in str(item[category]).lower() for category in categories)] if term else catalog
-        if from_menu:
-            self.terms = self.terms + self.search_entry.get().strip().lower().split()
-            
-        results = [item for item in catalog if all(any(term in str(item[category]).lower() for category in categories) for term in self.terms)] if self.terms else catalog
-        self.display_results(results)
+        text = self.search_entry.get()
+        return self.DB.search(self.terms, self.search_entry, from_menu)
 
     def handle_dropdown_selection(self, event):
         # Executes the selected action from the dropdown menu
         actions = {
-            "Display Catalog": lambda: self.display_results(catalog),
+            "Display Catalog": lambda: self.display_results(self.DB.get_car_catalog()),
             "View Item Details": self.view_item,
             "Add Entry": self.add_item,
             "Update Entry": self.update_item,
@@ -122,6 +117,7 @@ class CatalogApp:
                 player.load(value)
                 player.bind("<Map>", lambda e: player.place(relwidth=0.5, relheight=0.5, relx=0.5, rely=0.5, anchor="center"))
                 player.play()
+                continue
             elif value:
                 tk.Label(frame, text=f"{key}: {value}", font=("Arial", 12), bg="#f0f8ff").pack()
         
@@ -133,7 +129,7 @@ class CatalogApp:
 
     def view_item(self):
         item_id = simpledialog.askstring("View Item", "Enter item ID:")
-        item = next((i for i in catalog if i['ID'] == item_id), None)
+        item = self.DB.get_car(item_id)
         self.display_item_details(item)
 
     def add_item(self):
@@ -142,8 +138,8 @@ class CatalogApp:
         frame.place(relx=0.5, rely=0.5, anchor="center")
 
         tk.Label(frame, text="Add Item", font=("Arial", 16, "bold"), bg="white").pack(pady=10)
-        labels = [label + ":" for label in categories[1:]]
-        entries = [tk.Entry(frame) for _ in categories[1:]]
+        labels = [label + ":" for label in self.DB.get_categories()[1:]]
+        entries = [tk.Entry(frame) for _ in self.DB.get_categories()[1:]]
 
         for label, entry in zip(labels, entries):
             tk.Label(frame, text=label, bg="white").pack()
@@ -160,7 +156,7 @@ class CatalogApp:
     def update_item(self, ID=None):
         if ID is None:
             ID = simpledialog.askstring("Update Item", "Enter item ID to update:")
-        item = next((i for i in catalog if i['ID'] == ID), None)
+        item = self.DB.get_car(ID)
         if not item:
             messagebox.showerror("Error", "Item not found")
             return
@@ -169,8 +165,8 @@ class CatalogApp:
         frame.place(relx=0.5, rely=0.5, anchor="center")
 
         tk.Label(frame, text="Update Item", font=("Arial", 16, "bold"), bg="white").pack(pady=10)
-        labels = [label + ":" for label in categories[1:]]
-        entries = [tk.Entry(frame) for _ in categories[1:]]
+        labels = [label + ":" for label in self.DB.get_categories()[1:]]
+        entries = [tk.Entry(frame) for _ in self.DB.get_categories()[1:]]
 
         for label, entry in zip(labels, entries):
             tk.Label(frame, text=label, bg="white").pack()
@@ -187,16 +183,16 @@ class CatalogApp:
 
     def send_info(self, entries, ID=None):
         if ID:
-            car_info = dict({"ID": ID}, **{key: entry.get() for key, entry in zip(categories[1:], entries)})
+            car_info = dict({"ID": ID}, **{key: entry.get() for key, entry in zip(self.DB.get_categories()[1:], entries)})
         else:
             # If no previous ID is provided, generate a new one based on the last element in the catalog
-            car_info = dict({"ID": str(int(catalog[-1].get("ID"))+1)}, **{key: entry.get() for key, entry in zip(categories[1:], entries)})
+            car_info = dict({"ID": str(int(self.DB.get_car_catalog()[-1].get("ID"))+1)}, **{key: entry.get() for key, entry in zip(self.DB.get_categories()[1:], entries)})
         print(car_info)
         if car_info["Model"] and car_info["Year"].isdigit():
             if ID:
-                update_car(car_info)
+                self.DB.update_car(car_info)
             else:
-                add_car(car_info)
+                self.DB.add_car(car_info)
             self.main_menu() 
         else:
             # Maybe better error message for what is wrong specifics?
@@ -206,10 +202,13 @@ class CatalogApp:
         if not ID:
             ID = simpledialog.askstring("Remove Item", "Enter item ID to remove:")
         if ID:
-            confirm = messagebox.askyesno("Confirm", "Are you sure you want to remove this item?")
-            if confirm:
-                remove_car(ID)
-                messagebox.showinfo("Success", "Car removed successfully")
+            if (not self.DB.if_exist(ID)):
+                messagebox.showinfo("Error", "Car does not exist")
+            else:
+                confirm = messagebox.askyesno("Confirm", "Are you sure you want to remove this item?")
+                if confirm:
+                    self.DB.remove_car(ID)
+                    messagebox.showinfo("Success", "Car removed successfully")
         self.main_menu()
 
     def on_closing(self):
@@ -218,7 +217,7 @@ class CatalogApp:
         self.root.destroy()
     
     def on_save(self):
-        save_catalog()
+        self.DB.save_catalog()
         messagebox.showinfo("Success", "Catalog saved successfully")
 
     def clear_window(self):
