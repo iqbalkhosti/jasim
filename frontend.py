@@ -4,7 +4,7 @@ from tkVideoPlayer import TkinterVideo
 from database_backend import Database
 
 class CatalogApp:
-    terms = []
+    text = ""
     DB = Database()
     def __init__(self, root):
         # Initialize the application window with a title, size, and background color
@@ -53,7 +53,7 @@ class CatalogApp:
         self.search_entry = tk.Entry(search_frame, width=40)
         self.search_entry.bind("<Return>", lambda e: self.search(True))
         self.search_entry.pack(side=tk.LEFT, padx=5)
-        tk.Button(search_frame, text="Go", command=lambda: self.seatch(True), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
+        tk.Button(search_frame, text="Go", command=lambda: self.search(True), bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
 
         self.selected_option = tk.StringVar(value="Select Option")
         dropdown = ttk.Combobox(frame, textvariable=self.selected_option,
@@ -64,8 +64,9 @@ class CatalogApp:
 
     # NOTICE, MOVED TO BACKEND
     def search(self, from_menu=False):
-        text = self.search_entry.get()
-        return self.DB.search(self.terms, self.search_entry, from_menu)
+        if from_menu:
+            self.text = self.search_entry.get()
+        self.display_results(self.DB.search(self.terms, self.text))
 
     def handle_dropdown_selection(self, event):
         # Executes the selected action from the dropdown menu
@@ -130,6 +131,7 @@ class CatalogApp:
     def view_item(self):
         item_id = simpledialog.askstring("View Item", "Enter item ID:")
         item = self.DB.get_car(item_id)
+        self.text = ""
         self.display_item_details(item)
 
     def add_item(self):

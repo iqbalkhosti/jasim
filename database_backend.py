@@ -47,11 +47,9 @@ class Database:
             writer.writerows(self.catalog)
 
     # used for filtering specific items
-    def search(self, terms, text, from_menu=False):
-        if from_menu:
-            terms = terms + text.strip().lower().split()
-            
-        results = [item for item in self.DB.get_car_catalog() if all(any(term in str(item[category]).lower() for category in self.DB.get_categories()) for term in self.terms)] if self.terms else self.DB.get_car_catalog()
+    def search(self, terms, text):
+        terms = terms + text.strip().lower().split()
+        results = [item for item in self.get_car_catalog() if all(any(term in str(item[category]).lower() for category in self.get_categories()) for term in terms)] if terms else self.get_car_catalog()
         return results
 
     # catalog getter
