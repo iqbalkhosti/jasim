@@ -15,6 +15,9 @@ class Database:
 
     # add a new car to the catalog
     def add_car(self, car_info):
+        if not car_info["Year"].isdigit():
+            print("Invalid Year. Year must be a number.")
+            return
         print("For bulk adding, please edit CSV directly") #$
         self.catalog.append(car_info)
 
