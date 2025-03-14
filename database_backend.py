@@ -70,9 +70,37 @@ class Database:
                 return item
         return None
     
-    # FOR NOW, THIS IS HERE. WE MAY WANT TO MOVE THIS TO A NEW CLASS HOWEVER
-    # def save_fav_car(self, make, model, year, color):
-    #     for i in self.catalog:
-    #         if(i.get("Make")==make and i.get("Model")==model and i.get("Year")==str(year) and i.get("Color")==color):
+  #  FOR NOW, THIS IS HERE. WE MAY WANT TO MOVE THIS TO A NEW CLASS HOWEVER
+    def save_fav_car(self, make, model, year, color):
+        for i in self.catalog:
+            if(i.get("Make")==make and i.get("Model")==model and i.get("Year")==str(year) and i.get("Color")==color):
                 
-    #             self.fav_cars.append(i)
+                self.fav_cars.append(i)
+
+
+# This function goes through the list of fav cars and then check for the attribute mentioned in the first arugement of the function
+# And if it finds the value matching with the attribute in the arugement it will add the whole dictionary element to the list and after 
+# checking the whole list of fav_cars and making sure every car with the attribute is added to the filtered list, then it returns the filtered list
+                
+# NEEDS TO BE TESTED #
+
+    def filter_fav_cars(self, input2):
+        self.filtered_list = []
+
+        for d in self.fav_cars:
+            for value in d.values():
+                if input2 in value:
+                    self.filtered_list.append(d)
+
+        return self.filtered_list
+
+
+# Testing code
+
+# d1 = Database()
+# d1.save_fav_car("Honda", "Civic", "2019", "Blue")
+# d1.save_fav_car("Honda", "Accord", "2011", "Gray")
+
+
+
+# print(d1.filter_fav_cars("Model", "Honda"))
