@@ -77,13 +77,6 @@ class Database:
                 
                 self.fav_cars.append(i)
 
-
-# This function goes through the list of fav cars and then check for the attribute mentioned in the first arugement of the function
-# And if it finds the value matching with the attribute in the arugement it will add the whole dictionary element to the list and after 
-# checking the whole list of fav_cars and making sure every car with the attribute is added to the filtered list, then it returns the filtered list
-                
-# NEEDS TO BE TESTED #
-
     def filter_fav_cars(self, input2):
         self.filtered_list = []
 
@@ -93,14 +86,3 @@ class Database:
                     self.filtered_list.append(d)
 
         return self.filtered_list
-
-
-# Testing code
-
-# d1 = Database()
-# d1.save_fav_car("Honda", "Civic", "2019", "Blue")
-# d1.save_fav_car("Honda", "Accord", "2011", "Gray")
-
-
-
-# print(d1.filter_fav_cars("Model", "Honda"))

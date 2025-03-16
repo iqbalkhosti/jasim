@@ -74,5 +74,27 @@ class TestDatabase(unittest.TestCase):
         self.db.add_car(new_car)
         self.assertNotIn(new_car, self.db.catalog) 
 
+    def test_filter_fav_cars(self):
+        self.db.fav_cars = [
+            {"ID": "1", "Make": "Toyota", "Model": "Corolla", "Year": "2020", "Color": "Red"},
+            {"ID": "2", "Make": "Honda", "Model": "Civic", "Year": "2019", "Color": "Blue"},
+            {"ID": "3", "Make": "Ford", "Model": "Mustang", "Year": "2021", "Color": "Black"}
+        ]
+
+        filtered_by_make = self.db.filter_fav_cars("Toyota")
+        self.assertEqual(len(filtered_by_make), 1)
+        self.assertEqual(filtered_by_make[0]["Make"], "Toyota")
+
+        filtered_by_color = self.db.filter_fav_cars("Blue")
+        self.assertEqual(len(filtered_by_color), 1)
+        self.assertEqual(filtered_by_color[0]["Color"], "Blue")
+
+        filtered_by_year = self.db.filter_fav_cars("2021")
+        self.assertEqual(len(filtered_by_year), 1)
+        self.assertEqual(filtered_by_year[0]["Year"], "2021")
+
+        filtered_by_nonexistent = self.db.filter_fav_cars("Green")
+        self.assertEqual(len(filtered_by_nonexistent), 0)
+
 if __name__ == "__main__":
     unittest.main()

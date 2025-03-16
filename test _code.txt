@@ -84,3 +84,41 @@ print("Favorite cars after saving Tesla Model S 2022 Black:", fav_cars) #$
 # Try to save a car that doesn't exist in the catalog
 save_fav_car("Ford", "F-150", 2021, "Silver")
 print("Favorite cars after attempting to save Ford F-150 2021 Silver:", fav_cars) #$
+
+
+
+# Test code for testing task 10 in database_backend.py
+if __name__ == "__main__":
+    # Initialize the database
+    db = Database()
+
+    # Add some favorite cars to the fav_cars list for testing
+    db.fav_cars = [
+        {"ID": "1", "Make": "Toyota", "Model": "Corolla", "Year": "2020", "Color": "Red"},
+        {"ID": "2", "Make": "Honda", "Model": "Civic", "Year": "2019", "Color": "Blue"},
+        {"ID": "3", "Make": "Ford", "Model": "Mustang", "Year": "2021", "Color": "Black"}
+    ]
+
+    # Test filtering by Make
+    print("Filtering by Make 'Toyota':")
+    filtered_by_make = db.filter_fav_cars("Toyota")
+    for car in filtered_by_make:
+        print(car)
+
+    # Test filtering by Color
+    print("\nFiltering by Color 'Blue':")
+    filtered_by_color = db.filter_fav_cars("Blue")
+    for car in filtered_by_color:
+        print(car)
+
+    # Test filtering by a non-existent value
+    print("\nFiltering by 'Green' (non-existent):")
+    filtered_by_nonexistent = db.filter_fav_cars("Green")
+    for car in filtered_by_nonexistent:
+        print(car)
+
+    # Test filtering by Year
+    print("\nFiltering by Year '2021':")
+    filtered_by_year = db.filter_fav_cars("2021")
+    for car in filtered_by_year:
+        print(car)
