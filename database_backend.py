@@ -49,10 +49,43 @@ class Database:
             writer.writeheader()
             writer.writerows(self.catalog)
 
-    # used for filtering specific items
-    def search(self, terms, text):
-        terms = terms + text.strip().lower().split()
-        results = [item for item in self.get_car_catalog() if all(any(term in str(item[category]).lower() for category in self.get_categories()) for term in terms)] if terms else self.get_car_catalog()
+    '''
+    i REALLY didn't like the way this was working earlier, as it made stuff very hard
+    I've changed it fundamentally, please read all comments, which I've made very extensive
+
+    search is used to find specific items based on a filter
+    text is all the keywords sent by the user
+    relevance is used when there are no perfect matches
+    '''
+    def search(self, text, relevance = False):
+        terms = text.lower().split() # list of all filters
+        results = [] # stores all matching results
+
+        '''
+        Old code for matching results. Very hard to understand and also not very manipulable.
+        TODO: Left here in case needed, however please remove if tester finds no errors.
+        '''
+        #results = [item for item in self.get_car_catalog() if all(any(term in str(item[category]).lower() for category in self.get_categories()) for term in terms)] if terms else self.get_car_catalog()
+
+        for item in self.get_car_catalog():
+            terms_set = {term.lower() for term in terms} # all the terms saved as a set
+            values_set = {value.lower() for value in item.values()} # all values of current car saved as a set
+
+            if (relevance == True): # in the case that there were no perfect matches, run threshold check
+                threshold = (len(terms_set & values_set)) / len(terms) # decimal based on how many terms match of total terms
+                if threshold >= 0.4: # must match 40% to be included, feel free to change value
+                    results.append(item)
+            else: # checks for perfect matches
+                if terms_set.issubset(values_set): # check for subsetting
+                    results.append(item)
+
+        '''
+        if results is empty by here, and the relevance check has not been done
+        use recursion to run again for relevance
+        otherwise do not run again
+        '''
+        if len(results) is 0 and relevance is False:
+            results = self.search(text, True)
         return results
 
     # catalog getter
@@ -86,3 +119,4 @@ class Database:
                     self.filtered_list.append(d)
 
         return self.filtered_list
+

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
-from tkVideoPlayer import TkinterVideo
+# from tkVideoPlayer import TkinterVideo
 from database_backend import Database
 
 class CatalogApp:
@@ -66,7 +66,8 @@ class CatalogApp:
     def search(self, from_menu=False):
         if from_menu:
             self.text = self.search_entry.get()
-        self.display_results(self.DB.search(self.terms, self.text))
+        print(self.terms)
+        self.display_results(self.DB.search(self.text)) # used to send self.terms, but it was always empty
 
     def handle_dropdown_selection(self, event):
         # Executes the selected action from the dropdown menu
@@ -111,13 +112,13 @@ class CatalogApp:
         for key, value in item.items():
             if key == 'Video' and value:
                 #tk.Label(frame, text=f"{key}:", font=("Arial", 12, "bold"), bg="#f0f8ff").pack()
-                player = TkinterVideo(frame, scaled=True, bg="#f0f8ff")
+                # player = TkinterVideo(frame, scaled=True, bg="#f0f8ff")
                 #player.place(relx=0.5, rely=0.5, anchor="center")
-                player.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-                player._keep_aspect_ratio = True
-                player.load(value)
-                player.bind("<Map>", lambda e: player.place(relwidth=0.5, relheight=0.5, relx=0.5, rely=0.5, anchor="center"))
-                player.play()
+                # player.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+                # player._keep_aspect_ratio = True
+                # player.load(value)
+                # player.bind("<Map>", lambda e: player.place(relwidth=0.5, relheight=0.5, relx=0.5, rely=0.5, anchor="center"))
+                # player.play()
                 continue
             elif value:
                 tk.Label(frame, text=f"{key}: {value}", font=("Arial", 12), bg="#f0f8ff").pack()
