@@ -119,4 +119,3 @@ class Database:
                     self.filtered_list.append(d)
 
         return self.filtered_list
-

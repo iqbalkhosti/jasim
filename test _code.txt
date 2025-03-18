@@ -122,3 +122,30 @@ if __name__ == "__main__":
     filtered_by_year = db.filter_fav_cars("2021")
     for car in filtered_by_year:
         print(car)
+
+
+
+# Test code for testing task 7 in database_backend.py
+if __name__ == "__main__":
+    db = Database()
+    db.catalog = [
+        {"ID": "1", "Make": "Toyota", "Model": "Corolla", "Year": "2020", "Color": "Red"},
+        {"ID": "2", "Make": "Honda", "Model": "Civic", "Year": "2019", "Color": "Blue"},
+        {"ID": "3", "Make": "Ford", "Model": "Mustang", "Year": "2021", "Color": "Black"}
+    ]
+
+    print("Exact Match:", db.search("Toyota Corolla 2020 Red"))
+
+    print("Partial Match:", db.search("Toyota Corolla"))
+
+    print("No Match:", db.search("Tesla Model S"))
+
+    print("Relevance Match:", db.search("Toyota Blue", relevance=True))
+
+    print("Empty Input:", db.search(""))
+
+    print("Case Insensitive:", db.search("toyota corolla"))
+
+    print("Multiple Terms:", db.search("Honda Civic Blue"))
+
+    print("Relevance Threshold:", db.search("Ford Mustang 2021 Black", relevance=True))

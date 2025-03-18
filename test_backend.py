@@ -48,9 +48,39 @@ class TestDatabase(unittest.TestCase):
         self.assertFalse(self.db.if_exist("999"))
 
     def test_search(self):
-        results = self.db.search([], "Toyota")
+        # Test exact match
+        results = self.db.search("Toyota Corolla 2020 Red")
         self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]["Make"], "Toyota")
+        self.assertEqual(results[0]["ID"], "1")
+
+        # Test partial match
+        results = self.db.search("Toyota Corolla")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["ID"], "1")
+
+        # Test no match
+        results = self.db.search("Tesla Model S")
+        self.assertEqual(len(results), 0)
+
+        # Test relevance-based search
+        results = self.db.search("Toyota Blue", relevance=True)
+        self.assertEqual(len(results), 2) 
+        self.assertIn(results[0]["ID"], ["1", "2"])
+        self.assertIn(results[1]["ID"], ["1", "2"])
+
+        # Test empty input
+        results = self.db.search("")
+        self.assertEqual(len(results), 2)
+
+        # Test case insensitivity
+        results = self.db.search("toyota corolla")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["ID"], "1")
+
+        # Test multiple terms
+        results = self.db.search("Honda Civic Blue")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["ID"], "2")
 
     def test_get_car(self):
         car = self.db.get_car("1")
