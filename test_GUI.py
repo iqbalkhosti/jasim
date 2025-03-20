@@ -106,12 +106,10 @@ class TestCatalogApp(unittest.TestCase):
         self.app.main_menu.assert_called_once()
 
     def test_search(self):
-        # Mock the search_entry and terms attributes
         self.app.search_entry = MagicMock()
         self.app.search_entry.get.return_value = "Toyota"
         self.app.terms = []
 
-        # Mock the database search results
         self.app.DB.search = MagicMock(return_value=[
             {"ID": "1", "Make": "Toyota", "Model": "Corolla", "Year": "2020", "Color": "Red"}
         ])
@@ -125,7 +123,6 @@ class TestCatalogApp(unittest.TestCase):
 
     @patch('frontend.CatalogApp.display_results')
     def test_handle_dropdown_selection_display_catalog(self, mock_display_results):
-        # Mock the selected_option attribute
         self.app.selected_option = MagicMock()
         self.app.selected_option.get.return_value = "Display Catalog"
 
@@ -142,7 +139,6 @@ class TestCatalogApp(unittest.TestCase):
 
     @patch('frontend.messagebox.showerror')
     def test_update_item(self, mock_showerror):
-        # Mock the database methods
         self.app.DB.get_car = MagicMock(return_value={"ID": "1", "Make": "Toyota", "Model": "Corolla", "Year": "2020", "Color": "Red"})
         self.app.DB.update_car = MagicMock()
         self.app.main_menu = MagicMock()
@@ -165,7 +161,6 @@ class TestCatalogApp(unittest.TestCase):
 
     @patch('frontend.messagebox.showinfo')
     def test_on_save(self, mock_showinfo):
-        # Mock the database save method
         self.app.DB.save_catalog = MagicMock()
 
         self.app.on_save()
@@ -176,7 +171,6 @@ class TestCatalogApp(unittest.TestCase):
     @patch('frontend.messagebox.askyesno', return_value=True)
     @patch('frontend.CatalogApp.on_save')
     def test_on_closing_save(self, mock_on_save, mock_askyesno):
-        # Mock the destroy method of the root window
         self.app.root.destroy = MagicMock()
 
         self.app.on_closing()
@@ -196,6 +190,22 @@ class TestCatalogApp(unittest.TestCase):
         mock_video_player.assert_called_once()
         mock_video_player.return_value.load.assert_called_once_with("path/to/video.mp4")
         mock_video_player.return_value.play.assert_called_once()
+
+    @patch('tkinter.messagebox.showinfo')
+    def test_logout(self, mock_showinfo):
+        self.app.clear_window = MagicMock()
+        self.app.login_screen = MagicMock()
+        
+        self.app.logout()
+        
+        # Verify that clear_window was called
+        self.app.clear_window.assert_called_once()
+        
+        # Verify that login_screen was called
+        self.app.login_screen.assert_called_once()
+        
+        # Verify that showinfo was called with the correct arguments
+        mock_showinfo.assert_called_once_with("Logout Successful", "You have been logged out.")
 
 if __name__ == "__main__":
     unittest.main()
