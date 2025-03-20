@@ -228,6 +228,16 @@ class CatalogApp:
         for widget in self.root.winfo_children():
             widget.destroy()
 
+    # def logout(self):
+    #     # Clear the current window
+    #     self.clear_window()
+        
+    #     # Display the login screen
+    #     self.login_screen()
+        
+    #     # Show a success message
+    #     messagebox.showinfo("Logout Successful", "You have been logged out.")
+
 if __name__ == "__main__":
     root = tk.Tk()
     CatalogApp(root)
