@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
-#from tkVideoPlayer import TkinterVideo
+from tkVideoPlayer import TkinterVideo
 from database_backend import Database
 
 class CatalogApp:
@@ -243,7 +243,7 @@ class CatalogApp:
                 player.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
                 player._keep_aspect_ratio = True
                 player.load(value)
-                player.bind("<Map>", lambda e: player.place(relwidth=0.5, relheight=0.5, relx=0.5, rely=0.5, anchor="center"))
+                player.bind("<Map>", lambda e: player.place(relwidth=0.5, relheight=0.5, relx=0.5, rely=0.7, anchor="center"))
                 player.play()
                 continue
             elif value:

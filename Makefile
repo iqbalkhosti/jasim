@@ -1,6 +1,5 @@
-# Jacob Mendler 100911093, Aaron Atlas 100926511
 SCRIPT_NAME = Car Catalog
-ENTRY_SCRIPT = frontend.py
+ENTRY_SCRIPT = Front_Layout.py
 BUILD_DIR = dist
 PYINSTALLER_FLAGS = --onefile --noconsole --hidden-import=tkVideoPlayer
 
