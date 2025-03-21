@@ -163,6 +163,7 @@ class CatalogApp:
         if not item:
             messagebox.showerror("Error", "Item not found")
             return
+
         self.clear_window()
         frame = tk.Frame(self.root, bg="white", padx=20, pady=20)
         frame.place(relx=0.5, rely=0.5, anchor="center")
@@ -173,13 +174,15 @@ class CatalogApp:
 
         for label, entry in zip(labels, entries):
             tk.Label(frame, text=label, bg="white").pack()
-            entry.insert(0, item.get(label.strip(": ")))
+            # Use .get() with a default value to avoid None
+            value = item.get(label.strip(": "), "")  # Default to empty string if key is missing
+            entry.insert(0, value)
             entry.pack()
 
         tk.Button(
             frame,
             text="Update",
-            command= lambda: self.send_info(entries, ID),
+            command=lambda: self.send_info(entries, ID),
             bg="#4682B4", fg="white"
         ).pack(pady=10)
         tk.Button(frame, text="Back", command=self.main_menu, bg="#4682B4", fg="white").pack(pady=10)

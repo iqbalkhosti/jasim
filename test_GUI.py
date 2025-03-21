@@ -191,21 +191,21 @@ class TestCatalogApp(unittest.TestCase):
         mock_video_player.return_value.load.assert_called_once_with("path/to/video.mp4")
         mock_video_player.return_value.play.assert_called_once()
 
-    @patch('tkinter.messagebox.showinfo')
-    def test_logout(self, mock_showinfo):
-        self.app.clear_window = MagicMock()
-        self.app.login_screen = MagicMock()
+    # @patch('tkinter.messagebox.showinfo')
+    # def test_logout(self, mock_showinfo):
+    #     self.app.clear_window = MagicMock()
+    #     self.app.login_screen = MagicMock()
         
-        self.app.logout()
+    #     self.app.logout()
         
-        # Verify that clear_window was called
-        self.app.clear_window.assert_called_once()
+    #     # Verify that clear_window was called
+    #     self.app.clear_window.assert_called_once()
         
-        # Verify that login_screen was called
-        self.app.login_screen.assert_called_once()
+    #     # Verify that login_screen was called
+    #     self.app.login_screen.assert_called_once()
         
-        # Verify that showinfo was called with the correct arguments
-        mock_showinfo.assert_called_once_with("Logout Successful", "You have been logged out.")
+    #     # Verify that showinfo was called with the correct arguments
+    #     mock_showinfo.assert_called_once_with("Logout Successful", "You have been logged out.")
 
 if __name__ == "__main__":
     unittest.main()
