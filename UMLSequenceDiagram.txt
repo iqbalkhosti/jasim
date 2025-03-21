@@ -1,0 +1,50 @@
+User                   CatalogApp                iteration_01_main
+  |                          |                            |
+  |---Login----------------->|                            |
+  |                          |--(Validate Credentials)--> |
+  |<-------Main Menu---------|                            |
+  |                          |                            |--Seach catalog
+  |---Enter Search Term----->|                            |
+  |                          |---Search Catalog---------->|
+  |                          |<---Filtered Results--------|
+  |<------Display Results----|                            |
+  |                          |                            |
+  |---Select "Add Entry"---->|                            |
+  |                          |---Display Input Fields---> |
+  |---Submit Car Data------->|                            |
+  |                          |--Validate Data------------>|
+  |                          |-------add_car(car_info)--->| 
+  |                          |                            |--Update catalog
+  |<------Main Menu----------|                            |
+  |                          |                            |
+  |---Select "Update Entry"->|                            |
+  |                          |---Request ID-------------> |
+  |---Provide ID------------>|                            |
+  |                          |---Retrieve Item----------->|
+  |---Submit Updated Data--->|                            |
+  |                          |--Validate Data------------>|
+  |                          |-----update_car(car_info)-->|
+  |                          |                            |--Modify catalog
+  |<------Main Menu----------|                            |
+  |                          |                            |
+  |---Select "Remove Entry"->|                            |
+  |                          |---Request ID-------------> |
+  |---Provide ID------------>|                            |
+  |                          |-----remove_car(ID)-------->|
+  |                          |                            |--Remove from catalog
+  |<------Main Menu----------|                            |
+  |                          |                            |--Exit
+  |---Select "Exit"--------->|                            |
+  |                          |---------Quit-------------->|
+
+
+
+
+
+
+
+
+
+
+
+
