@@ -84,7 +84,7 @@ class Database:
         use recursion to run again for relevance
         otherwise do not run again
         '''
-        if len(results) is 0 and relevance is False:
+        if len(results)== 0 and relevance is False:
             results = self.search(text, True)
         return results
 
@@ -119,3 +119,36 @@ class Database:
                     self.filtered_list.append(d)
 
         return self.filtered_list
+    
+    ### Functions for adding and removing items from the catalogue only by admin account type
+    def remove_from_catalogue(self, id):
+        username = input("What is your usenrame?\n")
+        password = input("What is your password?\n")
+
+        try:
+            with open("admins.csv", mode="r", newline="") as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if (row[0] == username and row[2]==password):
+                        for item in self.catalog:
+                            if item["ID"] == id:
+                                self.catalog.remove(item)
+
+
+        except FileNotFoundError:
+            print("Theres no item or file found please checka again")
+
+    def remove_from_catalogue(self, id, make, model, year, color, video ):
+        username = input("What is your usenrame?\n")
+        password = input("What is your password?\n")
+
+        try:
+            with open("database.csv", mode="a", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow[id, make, model, year, color, video]
+
+
+        except FileNotFoundError:
+            print("Theres no item or file found please checka again")
+
+
