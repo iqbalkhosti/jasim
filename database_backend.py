@@ -13,6 +13,12 @@ class Database:
             self.catalog = [row for row in reader]
             self.categories = reader.fieldnames
 
+        # Add ImageURL to categories if missing (from old version)
+        if "ImageURL" not in self.categories:
+            self.categories.append("ImageURL")
+            for car in self.catalog:
+                car["ImageURL"] = car.get("ImageURL", "")  # Initialize empty if missing
+
     # add a new car to the catalog
     def add_car(self, car_info):
         if not car_info["Year"].isdigit():
@@ -28,12 +34,15 @@ class Database:
                 item.update(car_info)
                 break
 
-    # remove an existing car
+    # remove an existing car (modified from new version to include favorite cleanup)
     def remove_car(self, ID):
+        # Remove from catalog
         for item in self.catalog:
             if item["ID"] == ID:
                 self.catalog.remove(item)
                 break
+        # Remove from favorites (from old version)
+        self.remove_favorite(ID)
 
     # checks if a specific ID exists
     def if_exist(self, ID):
@@ -102,23 +111,35 @@ class Database:
             if item["ID"] == ID:
                 return item
         return None
-    
-  #  FOR NOW, THIS IS HERE. WE MAY WANT TO MOVE THIS TO A NEW CLASS HOWEVER
+
+    # Original favorite management from new version
     def save_fav_car(self, make, model, year, color):
         for i in self.catalog:
             if(i.get("Make")==make and i.get("Model")==model and i.get("Year")==str(year) and i.get("Color")==color):
-                
                 self.fav_cars.append(i)
 
     def filter_fav_cars(self, input2):
         self.filtered_list = []
-
         for d in self.fav_cars:
             for value in d.values():
                 if input2 in value:
                     self.filtered_list.append(d)
-
         return self.filtered_list
+
+    # Improved favorite management from old version
+    def add_favorite(self, car_id):
+        car = self.get_car(car_id)
+        if car and not self.is_favorite(car_id):
+            self.fav_cars.append(car)
+
+    def remove_favorite(self, car_id):
+        self.fav_cars = [fav_car for fav_car in self.fav_cars if fav_car['ID'] != car_id]
+
+    def is_favorite(self, car_id):
+        return any(fav_car['ID'] == car_id for fav_car in self.fav_cars)
+
+    def get_favorites(self):
+        return [fav_car for fav_car in self.fav_cars if self.if_exist(fav_car['ID'])]
     
     ### Functions for adding and removing items from the catalogue only by admin account type
     def remove_from_catalogue(self, id):
