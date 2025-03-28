@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
-##from tkVideoPlayer import TkinterVideo
+from tkVideoPlayer import TkinterVideo
 from database_backend import Database
 
 class CatalogApp:
@@ -78,13 +78,10 @@ class CatalogApp:
         filter_frame.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=5)
         filter_frame.pack_propagate(False)  # Maintain width
         
-        # Creates as many dropdowns as there are categories
-        for key in self.DB.get_categories():
-            # FOR NOW, I've hard coded removing dropdowns for VIDEO and ID.
-            # Obviously you wouldn't sort by these, but this is sort of a hotfix
-            # Open to better fixes
-            if(key != "ID" and key!= "Video"):
-                self.create_filter_dropdown(filter_frame, key)
+        # Create the three filter dropdowns with expanded style
+        self.create_filter_dropdown(filter_frame, "Dropdown 1")
+        self.create_filter_dropdown(filter_frame, "Dropdown 2")
+        self.create_filter_dropdown(filter_frame, "Dropdown 3")
         
         # Right side - results grid
         self.results_frame = tk.Frame(content_frame, bg="white")
@@ -125,14 +122,13 @@ class CatalogApp:
         # Content frame for checkboxes
         content_frame = tk.Frame(frame, bg="white", padx=10)
         
-        # Add checkboxes for each fitler in category
+        # Add checkboxes
         filter_vars = []
-        filter_list = list({d[title]for d in self.DB.get_car_catalog()}) # List of all unique filters per category
-        for filter in filter_list:
+        for i in range(1, 8):
             var = tk.BooleanVar()
             filter_vars.append(var)
-            cb = tk.Checkbutton(content_frame, text=filter, variable=var, bg="white",
-                                command=lambda: self.apply_filters(title, filter_list))
+            cb = tk.Checkbutton(content_frame, text=f"Filter {i}", variable=var, bg="white",
+                               command=lambda: self.apply_filters())
             cb.pack(anchor="w")
         
         # Store references for later use
@@ -140,16 +136,15 @@ class CatalogApp:
             self.filter_checkboxes = {}
         self.filter_checkboxes[title] = filter_vars
 
-    def apply_filters(self, title, filter_list):
+    def apply_filters(self):
         # Apply selected filters to the search
-        self.text = ""
+        self.terms = []
         if hasattr(self, 'filter_checkboxes'):
             for title, checkbox_vars in self.filter_checkboxes.items():
                 for i, var in enumerate(checkbox_vars):
                     if var.get():
-                        if(filter_list[i] not in self.text):
-                            self.text += (filter_list[i]) + " "
-        self.search()
+                        self.terms.append({title: f"Filter {i+1}"})
+        self.search(False)
     
     def show_menu_dropdown(self):
         # Create popup menu at the button location
@@ -173,6 +168,7 @@ class CatalogApp:
             self.text = self.search_entry.get()
             if self.text == "Search":
                 self.text = ""
+        print(self.terms)
         self.display_results(self.DB.search(self.text))
 
     def display_catalog_grid(self, results):
@@ -243,12 +239,12 @@ class CatalogApp:
         for key, value in item.items():
             if key == 'Video' and value:
                 #tk.Label(details_frame, text=f"{key}:", font=("Arial", 12, "bold"), bg="white").pack()
-                ##player = TkinterVideo(details_frame, scaled=True, bg="white")
-                ##player.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-                ##player._keep_aspect_ratio = True
-                ##player.load(value)
-                ##player.bind("<Map>", lambda e: player.place(relwidth=0.5, relheight=0.5, relx=0.5, rely=0.7, anchor="center"))
-                ##player.play()
+                player = TkinterVideo(details_frame, scaled=True, bg="white")
+                player.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+                player._keep_aspect_ratio = True
+                player.load(value)
+                player.bind("<Map>", lambda e: player.place(relwidth=0.5, relheight=0.5, relx=0.5, rely=0.7, anchor="center"))
+                player.play()
                 continue
             elif value:
                 tk.Label(details_frame, text=f"{key}: {value}", font=("Arial", 12), bg="white").pack(anchor="w")
@@ -326,6 +322,7 @@ class CatalogApp:
         else:
             # If no previous ID is provided, generate a new one based on the last element in the catalog
             car_info = dict({"ID": str(int(self.DB.get_car_catalog()[-1].get("ID"))+1)}, **{key: entry.get() for key, entry in zip(self.DB.get_categories()[1:], entries)})
+        print(car_info)
         if car_info["Model"] and car_info["Year"].isdigit():
             if ID:
                 self.DB.update_car(car_info)
