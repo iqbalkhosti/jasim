@@ -48,3 +48,31 @@ def get_wishlist(username):
 ### Here are some specific functionalities that only the admin account will be able to have, and those will be as below,
 ### These functionalities can only be accessed if the account type is admin
 
+# Test 1: Register regular users and admins
+print("=== Testing User Registration ===")
+register_user("john_doe", "john@example.com", "password123", "user")
+register_user("jane_smith", "jane@example.com", "securepass", "user")
+register_user("admin_alice", "alice@admin.com", "adminpass", "admin")
+register_user("admin_bob", "bob@admin.com", "rootpass", "ADMIN")  # Test case insensitivity
+print("User registration completed. Check users.csv and admins.csv files.\n")
+
+# Test 2: Add items to wishlists
+print("=== Testing Wishlist Functionality ===")
+# Add items to John's wishlist
+add_to_wishlist("john_doe", {"item": "Book", "title": "Python Programming", "price": 39.99})
+add_to_wishlist("john_doe", {"item": "Headphones", "brand": "Sony", "price": 199.99})
+
+# Add items to Jane's wishlist
+add_to_wishlist("jane_smith", {"item": "Laptop", "model": "MacBook Pro", "price": 1499.99})
+add_to_wishlist("jane_smith", {"item": "Phone", "model": "iPhone 15", "price": 999.99})
+
+# Add to admin's wishlist (should work the same way)
+add_to_wishlist("admin_alice", {"item": "Desk", "type": "Standing Desk", "price": 399.99})
+print("\n")
+
+# Test 3: Retrieve wishlists
+print("=== Testing Wishlist Retrieval ===")
+print("John's wishlist:", get_wishlist("john_doe"))
+print("Jane's wishlist:", get_wishlist("jane_smith"))
+print("Alice's wishlist:", get_wishlist("admin_alice"))
+print("Non-existent user's wishlist:", get_wishlist("nonexistent_user"))
