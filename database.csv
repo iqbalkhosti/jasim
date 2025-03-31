@@ -1,3 +1,3 @@
-ID,Make,Model,Year,Color,Video
-1,Toyota,Corolla,2019,Red,Demo.mp4
-2,Honda,Civic,2019,Blue,BuildToolsDemo.mp4
+ID,Make,Model,Year,Color,Video,ImageURL
+1,Toyota,Corolla,2019,Red,Demo.mp4,
+2,Honda,Civic,2019,Blue,BuildToolsDemo.mp4,

@@ -75,21 +75,24 @@ class CatalogApp:
         self.menu_button.pack(side=tk.RIGHT)
         
         # Content area - split into left (filters) and right (results)
-        content_frame = tk.Frame(main_frame, bg="white")
-        content_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        self.content_frame = tk.Frame(main_frame, bg="white")
+        self.content_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
         # Left side - filter dropdowns
-        filter_frame = tk.Frame(content_frame, bg="white", width=240)
+        filter_frame = tk.Frame(self.content_frame, bg="white", width=240)
         filter_frame.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=5)
         filter_frame.pack_propagate(False)  # Maintain width
         
-        # Create the three filter dropdowns with expanded style
-        self.create_filter_dropdown(filter_frame, "Dropdown 1")
-        self.create_filter_dropdown(filter_frame, "Dropdown 2")
-        self.create_filter_dropdown(filter_frame, "Dropdown 3")
+        # Creates as many dropdowns as there are categories
+        for key in self.DB.get_categories():
+            # FOR NOW, I've hard coded removing dropdowns for VIDEO and ID.
+            # Obviously you wouldn't sort by these, but this is sort of a hotfix
+            # Open to better fixes
+            if(key != "ID" and key != "Video" and key != "ImageURL"):
+                self.create_filter_dropdown(filter_frame, key)
         
         # Right side - results grid
-        self.results_frame = tk.Frame(content_frame, bg="white")
+        self.results_frame = tk.Frame(self.content_frame, bg="white")
         self.results_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
         
         # Initialize terms list for filters
@@ -127,13 +130,14 @@ class CatalogApp:
         # Content frame for checkboxes
         content_frame = tk.Frame(frame, bg="white", padx=10)
         
-        # Add checkboxes
+        # Add checkboxes for each fitler in category
         filter_vars = []
-        for i in range(1, 8):
+        filter_list = list({d[title]for d in self.DB.get_car_catalog()}) # List of all unique filters per category
+        for filter in filter_list:
             var = tk.BooleanVar()
             filter_vars.append(var)
-            cb = tk.Checkbutton(content_frame, text=f"Filter {i}", variable=var, bg="white",
-                               command=lambda: self.apply_filters())
+            cb = tk.Checkbutton(content_frame, text=filter, variable=var, bg="white",
+                                command=lambda: self.apply_filters(title, filter_list))
             cb.pack(anchor="w")
         
         # Store references for later use
@@ -141,15 +145,16 @@ class CatalogApp:
             self.filter_checkboxes = {}
         self.filter_checkboxes[title] = filter_vars
 
-    def apply_filters(self):
+    def apply_filters(self, title, filter_list):
         # Apply selected filters to the search
-        self.terms = []
+        self.text = ""
         if hasattr(self, 'filter_checkboxes'):
             for title, checkbox_vars in self.filter_checkboxes.items():
                 for i, var in enumerate(checkbox_vars):
                     if var.get():
-                        self.terms.append({title: f"Filter {i+1}"})
-        self.search(False)
+                        if(filter_list[i] not in self.text):
+                            self.text += (filter_list[i]) + " "
+        self.search()
     
     def show_menu_dropdown(self):
         # Create popup menu
@@ -398,11 +403,20 @@ class CatalogApp:
     def show_favorites(self):
         self.display_results(self.DB.get_favorites(), view='favorites')
 
-    def display_results(self, results, view='main'):
+    def display_results(self, results):
         # Display search results as a grid of car cards
-        self.current_view = view
-        self.clear_window()
-        self.main_menu()  # Recreate the main layout
+        #self.clear_window()
+        #self.main_menu()  # Recreate the main layout
+        try:
+            self.results_frame.destroy()
+            self.results_frame = tk.Frame(self.content_frame, bg="white")
+            self.results_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+        except:
+            self.clear_window()
+            self.main_menu()
+            self.results_frame.destroy()
+            self.results_frame = tk.Frame(self.content_frame, bg="white")
+            self.results_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
         self.display_catalog_grid(results)  # Display results in the grid
 
     #

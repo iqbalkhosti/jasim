@@ -13,11 +13,11 @@ class Database:
             self.catalog = [row for row in reader]
             self.categories = reader.fieldnames
 
-        # Add ImageURL to categories if missing (from old version)
-        if "ImageURL" not in self.categories:
-            self.categories.append("ImageURL")
-            for car in self.catalog:
-                car["ImageURL"] = car.get("ImageURL", "")  # Initialize empty if missing
+        # # Add ImageURL to categories if missing (from old version)
+        # if "ImageURL" not in self.categories:
+        #     self.categories.append("ImageURL")
+        #     for car in self.catalog:
+        #         car["ImageURL"] = car.get("ImageURL", "")  # Initialize empty if missing
 
     # add a new car to the catalog
     def add_car(self, car_info):
