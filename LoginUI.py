@@ -71,7 +71,7 @@ class LoginUI:
         ttk.Button(options_frame, text="Create Account", 
                   command=self._show_signup, width=15).grid(row=0, column=0, padx=5)
         ttk.Button(options_frame, text="Continue as Guest", 
-                  command=self._guest_login, width=15).grid(row=0, column=1, padx=5)
+                  command=self._guest_login, width=18).grid(row=0, column=1, padx=5)
 
     def _clear_error(self):
         self.error_label.config(text="")
