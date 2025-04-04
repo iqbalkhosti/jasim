@@ -4,3 +4,5 @@ jane_smith,jane@example.com,securepass
 test_user,user@test.com,password123
 john_doe,john@example.com,password123
 jane_smith,jane@example.com,securepass
+john_doe,john@example.com,password123
+jane_smith,jane@example.com,securepass

@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import urllib.request
 from io import BytesIO
 #from tkVideoPlayer import TkinterVideo
+from LoginUI import LoginUI
 from database_backend import Database
 
 #pip install Pillow 
@@ -17,30 +18,24 @@ class CatalogApp:
         self.root.title("Catalog System")
         self.root.geometry("900x600")  # Increased size to match mockup
         self.root.configure(bg="white")
-        self.login_screen()
         self.current_view = 'main'
+        self.DB = Database()
+        self._initialize_ui()
+        
+    def _initialize_ui(self):
+        # Start with login screen
+        self.login_ui = LoginUI(self.root, self._handle_login_success)
+        
+    def _handle_login_success(self, user_type, username):
+        self.user_type = user_type
+        self.current_user = username
+        self._setup_admin_features()
+        self.main_menu()
 
-    def login_screen(self):
-        # Creates the login screen with username and password input fields
-        # Displays an error message if login fails
-        self.clear_window()
-        frame = tk.Frame(self.root, bg="white", padx=20, pady=20)
-        frame.place(relx=0.5, rely=0.5, anchor="center")
-
-        tk.Label(frame, text="Login", font=("Arial", 16, "bold"), bg="white").pack(pady=10)
-        username_entry, password_entry = tk.Entry(frame), tk.Entry(frame, show="*")
-
-        for label, entry in zip(["Username:", "Password:"], [username_entry, password_entry]):
-            tk.Label(frame, text=label, bg="white").pack()
-            entry.pack()
-
-        tk.Button(
-            frame,
-            text="Login",
-            command=lambda: self.main_menu() if username_entry.get() == "" and password_entry.get() == ""
-            else messagebox.showerror("Login Failed", "Invalid username or password"),
-            bg="#4682B4", fg="white"
-        ).pack(pady=10)
+    def _setup_admin_features(self):
+        if self.user_type == 'admin':
+            # Add admin-specific features here
+            print("Admin features enabled")
 
     def main_menu(self):
         # Displays the main menu with options to search, display catalog, add, update, or remove items
