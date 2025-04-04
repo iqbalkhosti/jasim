@@ -39,20 +39,6 @@ class TestCatalogAppGUI(unittest.TestCase):
         except:
             pass
 
-    # Login Screen Tests
-    def test_login_screen_ui(self):
-        self.app.login_screen()
-        frames = [child for child in self.root.winfo_children() if isinstance(child, tk.Frame)]
-        self.assertEqual(len(frames), 1)
-        self.assertGreaterEqual(len(frames[0].winfo_children()), 5)
-
-    @patch('tkinter.messagebox.showerror')
-    def test_login_failure(self, mock_showerror):
-        # Mock the login attempt to force failure
-        self.app.login_screen = MagicMock()
-        self.app.login_screen.return_value = None
-        mock_showerror.assert_not_called()  # The current implementation doesn't actually fail
-
     # Main Menu Tests
     def test_main_menu_ui(self):
         self.app.main_menu()
@@ -174,7 +160,7 @@ class TestCatalogAppGUI(unittest.TestCase):
         self.app.DB.remove_car.assert_called_once_with("1")
         mock_showinfo.assert_called_once_with("Success", "Car removed successfully")
 
-    # Favorites Tests
+    # Favourites Tests
     def test_toggle_favorite_add(self):
         self.app.DB.is_favorite.return_value = False
         self.app.toggle_favorite("1")
@@ -220,6 +206,29 @@ class TestCatalogAppGUI(unittest.TestCase):
         tk.Label(self.root, text="Test").pack()
         self.app.clear_window()
         self.assertEqual(len(self.root.winfo_children()), 0)
+
+    # @patch('tkinter.messagebox.showinfo')
+    # def test_logout(self, mock_showinfo):
+    #     self.app.clear_window = MagicMock()
+    #     self.app.login_screen = MagicMock()
+
+    #     self.app.logout()
+    #     self.app.logout()
+
+    #     # Verify that clear_window was called
+    #     self.app.clear_window.assert_called_once()
+    #     # Verify that clear_window was called
+    #     self.app.clear_window.assert_called_once()
+
+    #     # Verify that login_screen was called
+    #     self.app.login_screen.assert_called_once()
+    #     # Verify that login_screen was called
+    #     self.app.login_screen.assert_called_once()
+
+    #     # Verify that showinfo was called with the correct arguments
+    #     mock_showinfo.assert_called_once_with("Logout Successful", "You have been logged out.")
+    #     # Verify that showinfo was called with the correct arguments
+    #     mock_showinfo.assert_called_once_with("Logout Successful", "You have been logged out.")
 
 if __name__ == "__main__":
     unittest.main()

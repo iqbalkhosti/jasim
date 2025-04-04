@@ -1,3 +1,3 @@
 ID,Make,Model,Year,Color,Video,ImageURL
-1,Toyota,Corolla,2019,Red,Demo.mp4,
-2,Honda,Civic,2019,Blue,BuildToolsDemo.mp4,
+1,Toyota,Corolla,2021,Red,Demo.mp4,https://dealer-content.s3.amazonaws.com/images/models/toyota/2021/corolla/colors/barcelona-red-metallic.png
+2,Honda,Civic,2019,Blue,BuildToolsDemo.mp4,https://di-uploads-pod2.dealerinspire.com/underrinerhondaredesign/uploads/2018/12/2019-Honda-Civic-Sport-Aegean-Blue-Metallic.png
