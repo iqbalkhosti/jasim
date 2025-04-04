@@ -152,14 +152,15 @@ class CatalogApp:
         self.search()
     
     def show_menu_dropdown(self):
-        # Create popup menu
+    # Create popup menu
         menu = tk.Menu(self.root, tearoff=0)
         menu.add_command(label="Display Catalog", command=lambda: self.display_results(self.DB.get_car_catalog()))
         menu.add_command(label="View Item Details", command=self.view_item)
-        menu.add_command(label="Add Entry", command=self.add_item)
-        menu.add_command(label="Update Entry", command=self.update_item)
-        menu.add_command(label="Remove Entry", command=self.remove_item)
-        menu.add_command(label="Save Catalog", command=self.on_save)
+        if self.user_type == 'admin':
+            menu.add_command(label="Add Entry", command=self.add_item)
+            menu.add_command(label="Update Entry", command=self.update_item)
+            menu.add_command(label="Remove Entry", command=self.remove_item)
+            menu.add_command(label="Save Catalog", command=self.on_save)
         menu.add_command(label="Favorites", command=self.show_favorites)
         menu.add_separator()
         menu.add_command(label="Exit", command=self.on_closing)
@@ -375,17 +376,18 @@ class CatalogApp:
         button_frame = tk.Frame(details_panel, bg="white")
         button_frame.place(relx=0.5, rely=0.95, anchor="center")  # 95% down the panel
         
-        tk.Button(button_frame, text="Update", 
-                command=lambda: self.update_item(item.get('ID')), 
-                bg="#4682B4", fg="white", width=12).pack(side="left", padx=10)
-        tk.Button(button_frame, text="Remove", 
-                command=lambda: self.remove_item(item.get('ID')), 
-                bg="#4682B4", fg="white", width=12).pack(side="left", padx=10)
+        if self.user_type == 'admin':
+            tk.Button(button_frame, text="Update", 
+                    command=lambda: self.update_item(item.get('ID')), 
+                    bg="#4682B4", fg="white", width=12).pack(side="left", padx=10)
+            tk.Button(button_frame, text="Remove", 
+                    command=lambda: self.remove_item(item.get('ID')), 
+                    bg="#4682B4", fg="white", width=12).pack(side="left", padx=10)
         
         fav_text = "Add to Favorites" if not self.DB.is_favorite(item.get('ID')) else "Remove from Favorites"
         tk.Button(button_frame, text=fav_text, command=lambda: self.toggle_favorite(item.get('ID')),
-                  bg="#4682B4", fg="white", width=16).pack(side=tk.LEFT, padx=10)
-            
+                    bg="#4682B4", fg="white", width=16).pack(side=tk.LEFT, padx=10)
+                
     def toggle_favorite(self, car_id):
         if self.DB.is_favorite(car_id):
             self.DB.remove_favorite(car_id)
@@ -421,6 +423,9 @@ class CatalogApp:
         self.display_item_details(item)
 
     def add_item(self):
+        if self.user_type != 'admin':
+            messagebox.showerror("Permission Denied", "Only administrators can add entries.")
+        return
         self.clear_window()
         frame = tk.Frame(self.root, bg="white", padx=20, pady=20)
         frame.place(relx=0.5, rely=0.5, anchor="center")
@@ -445,6 +450,9 @@ class CatalogApp:
                  bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
     
     def update_item(self, ID=None):
+        if self.user_type != 'admin':
+            messagebox.showerror("Permission Denied", "Only administrators can update entries.")
+        return
         if ID is None:
             ID = simpledialog.askstring("Update Item", "Enter item ID to update:")
         item = self.DB.get_car(ID)
@@ -494,6 +502,9 @@ class CatalogApp:
             messagebox.showerror("Error", "Either missing Model or incorrect Year")
 
     def remove_item(self, ID=None):
+        if self.user_type != 'admin':
+            messagebox.showerror("Permission Denied", "Only administrators can remove entries.")
+        return
         if not ID:
             ID = simpledialog.askstring("Remove Item", "Enter item ID to remove:")
         if ID:
@@ -507,11 +518,15 @@ class CatalogApp:
         self.display_results(self.DB.get_car_catalog())
 
     def on_closing(self):
-        if messagebox.askyesno("Save Catalog", "Would you like to save the catalog before exiting?"):
-            self.on_save()
+        if self.user_type == 'admin':
+            if messagebox.askyesno("Save Catalog", "Would you like to save the catalog before exiting?"):
+                self.on_save()
         self.root.destroy()
     
     def on_save(self):
+        if self.user_type != 'admin':
+            messagebox.showerror("Permission Denied", "Only administrators can save the catalog.")
+        return
         self.DB.save_catalog()
         messagebox.showinfo("Success", "Catalog saved successfully")
 
