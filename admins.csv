@@ -1,2 +1,8 @@
 admin1,admin1@dealership.com,secure123
 manager1,manager@dealership.com,manage456
+admin_alice,alice@admin.com,adminpass
+admin_bob,bob@admin.com,rootpass
+test_user2,user2@test.com,pass123
+test_admin,admin@test.com,admin123
+admin_alice,alice@admin.com,adminpass
+admin_bob,bob@admin.com,rootpass
