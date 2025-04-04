@@ -403,7 +403,7 @@ class CatalogApp:
     def show_favorites(self):
         self.display_results(self.DB.get_favorites(), view='favorites')
 
-    def display_results(self, results):
+    def display_results(self, results, view='main'):
         # Display search results as a grid of car cards
         #self.clear_window()
         #self.main_menu()  # Recreate the main layout
@@ -418,8 +418,6 @@ class CatalogApp:
             self.results_frame = tk.Frame(self.content_frame, bg="white")
             self.results_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
         self.display_catalog_grid(results)  # Display results in the grid
-
-    #
 
     def view_item(self):
         item_id = simpledialog.askstring("View Item", "Enter item ID:")
