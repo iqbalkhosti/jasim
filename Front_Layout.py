@@ -3,9 +3,10 @@ from tkinter import messagebox, simpledialog, ttk
 from PIL import Image, ImageTk
 import urllib.request
 from io import BytesIO
-#from tkVideoPlayer import TkinterVideo
+from tkVideoPlayer import TkinterVideo
 from LoginUI import LoginUI
 from database_backend import Database
+import os
 
 #pip install Pillow 
 class CatalogApp:
@@ -307,8 +308,8 @@ class CatalogApp:
 
         # Back button
         back_button = tk.Button(main_frame, text="← Back", 
-                            command=lambda: self.display_results(self.DB.get_car_catalog()), 
-                            bg="#4682B4", fg="white")
+                             command=lambda: self.display_results(self.DB.get_car_catalog()), 
+                             bg="#4682B4", fg="white")
         back_button.grid(row=0, column=0, columnspan=2, sticky="nw", pady=10)
 
         # Configure grid layout
@@ -336,9 +337,39 @@ class CatalogApp:
             except Exception as e:
                 tk.Label(image_panel, text="Image Load Error\n" + str(e), 
                         bg="lightgray", wraplength=380).pack(pady=20)
+                img_label = None
         else:
             tk.Label(image_panel, text="No Image Available", 
                     bg="lightgray", font=("Arial", 14)).pack(pady=20)
+            img_label = None
+            
+        videoPath = item.get("Video", "")
+        if videoPath and img_label:            
+            def toggle_video(event=None):
+                nonlocal is_video_playing
+                if not is_video_playing:
+                    img_label.pack_forget()
+                    player.seek(0)
+                    player.play()
+                    is_video_playing = True
+                else:
+                    player.pause()
+                    img_label.pack(fill=tk.BOTH, expand=True)
+                    is_video_playing = False
+
+            if os.path.exists(videoPath):
+                video_frame = tk.Frame(image_panel, bg="white")
+                video_frame.pack(fill=tk.BOTH, expand=True)
+                player = TkinterVideo(video_frame, scaled=True, bg="white")
+                player.pack(fill=tk.BOTH, expand=True)
+                player._keep_aspect_ratio = True
+                player.load(videoPath)
+                # Bind toggle to both image label AND video player widget
+                img_label.bind("<Button-1>", toggle_video)
+                player.bind("<Button-1>", toggle_video)
+
+            is_video_playing = False  # Track video state
+            
 
         # Rectangular Details Panel (400x400)
         details_panel = tk.Frame(main_frame, bg="white", width=400, height=400)
@@ -425,7 +456,7 @@ class CatalogApp:
     def add_item(self):
         if self.user_type != 'admin':
             messagebox.showerror("Permission Denied", "Only administrators can add entries.")
-        return
+            return
         self.clear_window()
         frame = tk.Frame(self.root, bg="white", padx=20, pady=20)
         frame.place(relx=0.5, rely=0.5, anchor="center")
@@ -452,7 +483,7 @@ class CatalogApp:
     def update_item(self, ID=None):
         if self.user_type != 'admin':
             messagebox.showerror("Permission Denied", "Only administrators can update entries.")
-        return
+            return
         if ID is None:
             ID = simpledialog.askstring("Update Item", "Enter item ID to update:")
         item = self.DB.get_car(ID)
@@ -504,7 +535,7 @@ class CatalogApp:
     def remove_item(self, ID=None):
         if self.user_type != 'admin':
             messagebox.showerror("Permission Denied", "Only administrators can remove entries.")
-        return
+            return
         if not ID:
             ID = simpledialog.askstring("Remove Item", "Enter item ID to remove:")
         if ID:
@@ -526,7 +557,7 @@ class CatalogApp:
     def on_save(self):
         if self.user_type != 'admin':
             messagebox.showerror("Permission Denied", "Only administrators can save the catalog.")
-        return
+            return
         self.DB.save_catalog()
         messagebox.showinfo("Success", "Catalog saved successfully")
 
