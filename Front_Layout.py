@@ -423,66 +423,66 @@ class CatalogApp:
         self.display_item_details(item)
 
     def add_item(self):
-        if self.user_type != 'admin':
+        if (self.user_type != 'admin'):
             messagebox.showerror("Permission Denied", "Only administrators can add entries.")
-        return
-        self.clear_window()
-        frame = tk.Frame(self.root, bg="white", padx=20, pady=20)
-        frame.place(relx=0.5, rely=0.5, anchor="center")
+        else:
+            self.clear_window()
+            frame = tk.Frame(self.root, bg="white", padx=20, pady=20)
+            frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        tk.Label(frame, text="Add Item", font=("Arial", 16, "bold"), bg="white").pack(pady=10)
-        labels = [label + ":" for label in self.DB.get_categories()[1:]]
-        entries = [tk.Entry(frame) for _ in self.DB.get_categories()[1:]]
+            tk.Label(frame, text="Add Item", font=("Arial", 16, "bold"), bg="white").pack(pady=10)
+            labels = [label + ":" for label in self.DB.get_categories()[1:]]
+            entries = [tk.Entry(frame) for _ in self.DB.get_categories()[1:]]
 
-        for label, entry in zip(labels, entries):
-            tk.Label(frame, text=label, bg="white").pack()
-            entry.pack()
+            for label, entry in zip(labels, entries):
+                tk.Label(frame, text=label, bg="white").pack()
+                entry.pack()
 
-        button_frame = tk.Frame(frame, bg="white")
-        button_frame.pack(pady=10)
-        tk.Button(
-            button_frame,
-            text="Add",
-            command=lambda: self.send_info(entries),
-            bg="#4682B4", fg="white"
-        ).pack(side=tk.LEFT, padx=5)
-        tk.Button(button_frame, text="Cancel", command=lambda: self.display_results(self.DB.get_car_catalog()), 
-                 bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
+            button_frame = tk.Frame(frame, bg="white")
+            button_frame.pack(pady=10)
+            tk.Button(
+                button_frame,
+                text="Add",
+                command=lambda: self.send_info(entries),
+                bg="#4682B4", fg="white"
+            ).pack(side=tk.LEFT, padx=5)
+            tk.Button(button_frame, text="Cancel", command=lambda: self.display_results(self.DB.get_car_catalog()), 
+                    bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
     
     def update_item(self, ID=None):
         if self.user_type != 'admin':
             messagebox.showerror("Permission Denied", "Only administrators can update entries.")
-        return
-        if ID is None:
-            ID = simpledialog.askstring("Update Item", "Enter item ID to update:")
-        item = self.DB.get_car(ID)
-        if not item:
-            messagebox.showerror("Error", "Item not found")
-            return
-        
-        self.clear_window()
-        frame = tk.Frame(self.root, bg="white", padx=20, pady=20)
-        frame.place(relx=0.5, rely=0.5, anchor="center")
+        else:
+            if ID is None:
+                ID = simpledialog.askstring("Update Item", "Enter item ID to update:")
+            item = self.DB.get_car(ID)
+            if not item:
+                messagebox.showerror("Error", "Item not found")
+                return
+            
+            self.clear_window()
+            frame = tk.Frame(self.root, bg="white", padx=20, pady=20)
+            frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        tk.Label(frame, text="Update Item", font=("Arial", 16, "bold"), bg="white").pack(pady=10)
-        labels = [label + ":" for label in self.DB.get_categories()[1:]]
-        entries = [tk.Entry(frame) for _ in self.DB.get_categories()[1:]]
+            tk.Label(frame, text="Update Item", font=("Arial", 16, "bold"), bg="white").pack(pady=10)
+            labels = [label + ":" for label in self.DB.get_categories()[1:]]
+            entries = [tk.Entry(frame) for _ in self.DB.get_categories()[1:]]
 
-        for label, entry in zip(labels, entries):
-            tk.Label(frame, text=label, bg="white").pack()
-            entry.insert(0, item.get(label.strip(": ")))
-            entry.pack()
+            for label, entry in zip(labels, entries):
+                tk.Label(frame, text=label, bg="white").pack()
+                entry.insert(0, item.get(label.strip(": ")))
+                entry.pack()
 
-        button_frame = tk.Frame(frame, bg="white")
-        button_frame.pack(pady=10)
-        tk.Button(
-            button_frame,
-            text="Update",
-            command=lambda: self.send_info(entries, ID),
-            bg="#4682B4", fg="white"
-        ).pack(side=tk.LEFT, padx=5)
-        tk.Button(button_frame, text="Cancel", command=lambda: self.display_results(self.DB.get_car_catalog()), 
-                 bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
+            button_frame = tk.Frame(frame, bg="white")
+            button_frame.pack(pady=10)
+            tk.Button(
+                button_frame,
+                text="Update",
+                command=lambda: self.send_info(entries, ID),
+                bg="#4682B4", fg="white"
+            ).pack(side=tk.LEFT, padx=5)
+            tk.Button(button_frame, text="Cancel", command=lambda: self.display_results(self.DB.get_car_catalog()), 
+                    bg="#4682B4", fg="white").pack(side=tk.LEFT, padx=5)
 
     def send_info(self, entries, ID=None):
         if ID:
@@ -504,18 +504,18 @@ class CatalogApp:
     def remove_item(self, ID=None):
         if self.user_type != 'admin':
             messagebox.showerror("Permission Denied", "Only administrators can remove entries.")
-        return
-        if not ID:
-            ID = simpledialog.askstring("Remove Item", "Enter item ID to remove:")
-        if ID:
-            if (not self.DB.if_exist(ID)):
-                messagebox.showinfo("Error", "Car does not exist")
-            else:
-                confirm = messagebox.askyesno("Confirm", "Are you sure you want to remove this item?")
-                if confirm:
-                    self.DB.remove_car(ID)
-                    messagebox.showinfo("Success", "Car removed successfully")
-        self.display_results(self.DB.get_car_catalog())
+        else:
+            if not ID:
+                ID = simpledialog.askstring("Remove Item", "Enter item ID to remove:")
+            if ID:
+                if (not self.DB.if_exist(ID)):
+                    messagebox.showinfo("Error", "Car does not exist")
+                else:
+                    confirm = messagebox.askyesno("Confirm", "Are you sure you want to remove this item?")
+                    if confirm:
+                        self.DB.remove_car(ID)
+                        messagebox.showinfo("Success", "Car removed successfully")
+            self.display_results(self.DB.get_car_catalog())
 
     def on_closing(self):
         if self.user_type == 'admin':
@@ -526,9 +526,9 @@ class CatalogApp:
     def on_save(self):
         if self.user_type != 'admin':
             messagebox.showerror("Permission Denied", "Only administrators can save the catalog.")
-        return
-        self.DB.save_catalog()
-        messagebox.showinfo("Success", "Catalog saved successfully")
+        else:
+            self.DB.save_catalog()
+            messagebox.showinfo("Success", "Catalog saved successfully")
 
     def clear_window(self):
         # Clears all widgets from the window before updating the UI
