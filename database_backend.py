@@ -63,11 +63,12 @@ class Database:
     I've changed it fundamentally, please read all comments, which I've made very extensive
 
     search is used to find specific items based on a filter
-    text is all the keywords sent by the user
+    terms is all the keywords sent by the user
     relevance is used when there are no perfect matches
     '''
-    def search(self, text, relevance = False):
-        terms = text.lower().split() # list of all filters
+    def search(self, terms, relevance = False):
+        terms = list(dict.fromkeys(terms)) # remove duplicates
+        print(terms)
         results = [] # stores all matching results
 
         '''
@@ -94,7 +95,7 @@ class Database:
         otherwise do not run again
         '''
         if len(results)== 0 and relevance is False:
-            results = self.search(text, True)
+            results = self.search(terms, True)
         return results
 
     # catalog getter

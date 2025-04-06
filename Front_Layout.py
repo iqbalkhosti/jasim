@@ -11,6 +11,8 @@ import os
 #pip install Pillow 
 class CatalogApp:
     text = ""
+    filter_map = {} # holds all filters
+    terms = []
     DB = Database()
     def __init__(self, root):
         # Initialize the application window with a title, size, and background color
@@ -38,7 +40,15 @@ class CatalogApp:
             # Add admin-specific features here
             print("Admin features enabled")
 
-    def main_menu(self):
+    # generates all filters before using them as global variable
+    def generate_filter_map(self):
+        for key in self.DB.get_categories():
+            if(key != "ID" and key != "Video" and key != "ImageURL"):
+                filter_list = list({d[key]for d in self.DB.get_car_catalog()}) # List of all unique filters per category
+                filter_list = sorted(filter_list)
+                self.filter_map[key] = filter_list
+
+    def main_menu(self, first_gen=True):
         # Displays the main menu with options to search, display catalog, add, update, or remove items
         # Includes a search bar and dropdown menus for filtering
         self.clear_window()
@@ -73,11 +83,35 @@ class CatalogApp:
         # Content area - split into left (filters) and right (results)
         self.content_frame = tk.Frame(main_frame, bg="white")
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
+
+
+        # Create a canvas with a scrollbar
+        canvas = tk.Canvas(self.content_frame, bg="white", width=240)  # Fixed width for filter panel
+        scrollbar = ttk.Scrollbar(self.content_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg="white")
+
+        # Update the scroll region whenever the scrollable frame changes size
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        # Pack canvas with fixed width and vertical expansion
+        canvas.pack(side="left", fill=tk.Y, expand=False)  # Keep width fixed at 240px
+        scrollbar.pack(side="left", fill="y")
+                
         # Left side - filter dropdowns
-        filter_frame = tk.Frame(self.content_frame, bg="white", width=240)
-        filter_frame.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=5)
-        filter_frame.pack_propagate(False)  # Maintain width
+        filter_frame = tk.Frame(scrollable_frame, bg="white", width=240)
+        filter_frame.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+        #filter_frame.pack_propagate(False)  # Maintain width
+
+        # Generates all possible filters
+        self.generate_filter_map()
         
         # Creates as many dropdowns as there are categories
         for key in self.DB.get_categories():
@@ -87,20 +121,20 @@ class CatalogApp:
             if(key != "ID" and key != "Video" and key != "ImageURL"):
                 self.create_filter_dropdown(filter_frame, key)
         
-        # Right side - results grid
-        self.results_frame = tk.Frame(self.content_frame, bg="white")
-        self.results_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
-        # Initialize terms list for filters
-        self.terms = []
-        
-        # Load initial catalog display
-        self.display_catalog_grid(self.DB.get_car_catalog())
+        # Only generate on first run
+        if(first_gen):
+            # Right side - results grid
+
+            self.results_frame = tk.Frame(self.content_frame, bg="white")
+            self.results_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+            # Load initial catalog display
+            self.display_catalog_grid(self.DB.get_car_catalog())
 
     def create_filter_dropdown(self, parent, title):
         # Create expandable dropdown filter menu
         frame = tk.Frame(parent, bg="white", bd=1, relief=tk.SOLID)
-        frame.pack(fill=tk.X, pady=5)
+        frame.pack(fill=tk.X, padx=5, pady=5)
         
         # Header with expand/collapse button
         header_frame = tk.Frame(frame, bg="white")
@@ -128,12 +162,12 @@ class CatalogApp:
         
         # Add checkboxes for each fitler in category
         filter_vars = []
-        filter_list = list({d[title]for d in self.DB.get_car_catalog()}) # List of all unique filters per category
+        filter_list = self.filter_map.get(title)
         for filter in filter_list:
             var = tk.BooleanVar()
             filter_vars.append(var)
             cb = tk.Checkbutton(content_frame, text=filter, variable=var, bg="white",
-                                command=lambda: self.apply_filters(title, filter_list))
+                                command=self.apply_filters)
             cb.pack(anchor="w")
         
         # Store references for later use
@@ -141,15 +175,16 @@ class CatalogApp:
             self.filter_checkboxes = {}
         self.filter_checkboxes[title] = filter_vars
 
-    def apply_filters(self, title, filter_list):
+    def apply_filters(self):
         # Apply selected filters to the search
-        self.text = ""
+        self.terms.clear()
         if hasattr(self, 'filter_checkboxes'):
             for title, checkbox_vars in self.filter_checkboxes.items():
+                filter_list = self.filter_map[title]
                 for i, var in enumerate(checkbox_vars):
                     if var.get():
                         if(filter_list[i] not in self.text):
-                            self.text += (filter_list[i]) + " "
+                            self.terms.append(filter_list[i])
         self.search()
     
     def show_menu_dropdown(self):
@@ -197,8 +232,8 @@ class CatalogApp:
             self.text = self.search_entry.get()
             if self.text == "Search":
                 self.text = ""
-        print(self.terms)
-        self.display_results(self.DB.search(self.text))
+        temp = (self.text.lower().split())
+        self.display_results(self.DB.search(self.terms + temp))
 
     def display_catalog_grid(self, results):
         # Clear existing results
@@ -230,6 +265,7 @@ class CatalogApp:
         # Create grid layout within the scrollable frame
         row_frame = None
         for idx, item in enumerate(results):
+            print(idx)
             # Create a new row for every 3 items
             if idx % 3 == 0:
                 row_frame = tk.Frame(scrollable_frame, bg="white")
@@ -249,7 +285,8 @@ class CatalogApp:
             image_url = item.get("ImageURL", "")
             if image_url:
                 try:
-                    with urllib.request.urlopen(image_url) as url_response:
+                    # Forces images to load faster, no idea why
+                    with urllib.request.urlopen(image_url, timeout=0.1) as url_response:
                         image_data = url_response.read()
                     image = Image.open(BytesIO(image_data))
                     image = image.resize((200, 180), Image.Resampling.LANCZOS)
@@ -308,7 +345,7 @@ class CatalogApp:
 
         # Back button
         back_button = tk.Button(main_frame, text="← Back", 
-                             command=lambda: self.display_results(self.DB.get_car_catalog()), 
+                             command=lambda: self.display_results(self.DB.search(self.terms)) if self.terms else self.display_results(self.DB.get_car_catalog()), 
                              bg="#4682B4", fg="white")
         back_button.grid(row=0, column=0, columnspan=2, sticky="nw", pady=10)
 
@@ -326,7 +363,7 @@ class CatalogApp:
         image_url = item.get("ImageURL", "")
         if image_url:
             try:
-                with urllib.request.urlopen(image_url) as url_response:
+                with urllib.request.urlopen(image_url, timeout=0.05) as url_response:
                     image_data = url_response.read()
                 image = Image.open(BytesIO(image_data))
                 image = image.resize((400, 400), Image.Resampling.LANCZOS)
@@ -431,17 +468,18 @@ class CatalogApp:
     def show_favorites(self):
         self.display_results(self.DB.get_favorites(), view='favorites')
 
+    # TODO: FIX MAYBE
+    # FOR JACOB, REMOVE THIS
     def display_results(self, results, view='main'):
         # Display search results as a grid of car cards
-        #self.clear_window()
-        #self.main_menu()  # Recreate the main layout
+
         try:
             self.results_frame.destroy()
             self.results_frame = tk.Frame(self.content_frame, bg="white")
             self.results_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
         except:
             self.clear_window()
-            self.main_menu()
+            self.main_menu(False)
             self.results_frame.destroy()
             self.results_frame = tk.Frame(self.content_frame, bg="white")
             self.results_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
@@ -521,7 +559,6 @@ class CatalogApp:
         else:
             # If no previous ID is provided, generate a new one based on the last element in the catalog
             car_info = dict({"ID": str(int(self.DB.get_car_catalog()[-1].get("ID"))+1)}, **{key: entry.get() for key, entry in zip(self.DB.get_categories()[1:], entries)})
-        print(car_info)
         if car_info["Model"] and car_info["Year"].isdigit():
             if ID:
                 self.DB.update_car(car_info)
