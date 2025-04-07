@@ -199,7 +199,8 @@ class CatalogApp:
             menu.add_command(label="Save Catalog", command=self.on_save)
         menu.add_command(label="Favorites", command=self.show_favorites)
         menu.add_separator()
-        menu.add_command(label="Exit", command=self.on_closing)
+        # Change the command for "Exit" to return_to_login
+        menu.add_command(label="Exit", command=self.return_to_login)
 
         # Calculate menu position
         menu.update_idletasks()  # Force geometry calculation
@@ -584,6 +585,14 @@ class CatalogApp:
                     self.DB.remove_car(ID)
                     messagebox.showinfo("Success", "Car removed successfully")
         self.display_results(self.DB.get_car_catalog())
+
+    def return_to_login(self):
+        # Reset user information
+        self.user_type = None
+        self.current_user = None
+        # Clear the current window and show login UI
+        self.clear_window()
+        self._initialize_ui()
 
     def on_closing(self):
         if self.user_type == 'admin':
