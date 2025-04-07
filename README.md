@@ -25,3 +25,7 @@ Other commands:
 - `rebuild` cleans, then builds
 
 <b>Note: The build script will only run if all dependency have been installed on your desired python version. Currently, tkVideoPlayer is not updated for the latest version of python, as such this, build script requires python 3.10.9 in order for tkVideoPlayer to function.<b>
+
+## Demo Recording
+Below is a video showing the program run:
+https://drive.google.com/file/d/14Wt1UVNjKmRpLT8uUcmc5woq4JcD7dqZ/view
