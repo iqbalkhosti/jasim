@@ -2,12 +2,13 @@ SCRIPT_NAME = Car Catalog
 ENTRY_SCRIPT = Front_Layout.py
 BUILD_DIR = dist
 PYINSTALLER_FLAGS = --onefile --noconsole --hidden-import=tkVideoPlayer
+PYPATH = python
 
 all: build
 
 # Build the executable using PyInstaller
 build:
-	python -m PyInstaller $(PYINSTALLER_FLAGS) $(ENTRY_SCRIPT)
+	$(PYPATH) -m PyInstaller $(PYINSTALLER_FLAGS) $(ENTRY_SCRIPT)
 
 # Clean up build artifacts (Windows & Unix compatible)
 clean:
@@ -17,3 +18,4 @@ clean:
 
 # Rebuild the executable
 rebuild: clean build
+
