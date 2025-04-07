@@ -8,8 +8,6 @@ from LoginUI import LoginUI
 from database_backend import Database
 import os
 
-# pip install Pillow 
-
 # The CatalogApp class defines the main application for a car catalog system.
 class CatalogApp:
     text = ""  # Stores search text input by the user.
